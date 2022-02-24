@@ -1,0 +1,27 @@
+name:sync-sazs34-scripts
+on:
+   schedule:
+     - corn : '1 0,15 * * *'
+     workflow_dispatch
+     watch:
+       types: started
+     repository_dispatch:
+       types: started
+jobs:
+  repo-sync:
+    env:
+    PAT:${{{ secrets.PAT }}
+  runs-on: ubuntu-latest
+  if: github.event.repository.owner.id == github.event.sender.id
+  steps:
+    - uses: actions/cheeckout@v2
+      with:
+        persist-credentials: false
+   - name: sync sazs34-scripts
+     uses: repo-sync/github@v2
+     if: evn.PAT
+     with:
+       source_repo:"https:github.com/sazs34/MyActions.git"
+       source_branch: "master"
+       destination_branch: "main"
+       github_token: ${{ secrets.PAT }}
